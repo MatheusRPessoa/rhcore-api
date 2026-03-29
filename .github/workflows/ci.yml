@@ -83,7 +83,7 @@ jobs:
           done
 
       - name: Run tests
-        run: npm run test -- --coverage
+        run: npm run test -- --coverage --runInBand
 
       - name: Build project
         run: npm run build
