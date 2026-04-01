@@ -1,16 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ErrorDetailsDto {
-  @ApiProperty({ description: 'Mensagem de erro', example: 'Dados inválidos' })
-  message: string;
-
-  @ApiProperty({ description: 'Tipo do erro', example: 'Bad Request' })
-  error: string;
-
-  @ApiProperty({ description: 'Código de status HTTP', example: 400 })
-  statusCode: number;
-}
-
 export class BadRequestResponseDto {
   @ApiProperty({ example: false })
   succeeded: boolean;
@@ -21,8 +10,14 @@ export class BadRequestResponseDto {
   @ApiProperty({ example: 'Dados inválidos' })
   message: string;
 
-  @ApiProperty({ type: ErrorDetailsDto })
-  error: ErrorDetailsDto;
+  @ApiProperty({
+    example: {
+      message: 'Dados inválidos',
+      error: 'Bad Request',
+      statusCode: 400,
+    },
+  })
+  error: object;
 }
 
 export class UnauthorizedResponseDto {
@@ -37,8 +32,14 @@ export class UnauthorizedResponseDto {
   })
   message: string;
 
-  @ApiProperty({ type: ErrorDetailsDto })
-  error: ErrorDetailsDto;
+  @ApiProperty({
+    example: {
+      message: 'Não autorizado',
+      error: 'Unauthorized',
+      statusCode: 401,
+    },
+  })
+  error: object;
 }
 
 export class NotFoundResponseDto {
@@ -51,8 +52,14 @@ export class NotFoundResponseDto {
   @ApiProperty({ example: 'Recurso não encontrado.' })
   message: string;
 
-  @ApiProperty({ type: ErrorDetailsDto })
-  error: ErrorDetailsDto;
+  @ApiProperty({
+    example: {
+      message: 'Recurso não encontrado.',
+      error: 'Not Found',
+      statusCode: 404,
+    },
+  })
+  error: object;
 }
 
 export class ConflictResponseDto {
@@ -65,6 +72,12 @@ export class ConflictResponseDto {
   @ApiProperty({ example: 'Conflito ao realizar a operação.' })
   message: string;
 
-  @ApiProperty({ type: ErrorDetailsDto })
-  error: ErrorDetailsDto;
+  @ApiProperty({
+    example: {
+      message: 'Conflito ao realizar a operação.',
+      error: 'Conflict',
+      statusCode: 409,
+    },
+  })
+  error: object;
 }
