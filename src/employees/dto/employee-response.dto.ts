@@ -36,8 +36,8 @@ export class EmployeeDataDto {
   @ApiPropertyOptional({ example: '(31) 99999-9999' })
   TELEFONE: string | null;
 
-  @ApiProperty({ example: '2025-01-15' })
-  DATA_ADMISSAO: Date;
+  @ApiPropertyOptional({ example: '2025-01-15' })
+  DATA_ADMISSAO: Date | null;
 
   @ApiProperty({ example: 'admin' })
   CRIADO_POR: string;
