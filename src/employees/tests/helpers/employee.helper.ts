@@ -86,7 +86,7 @@ export async function getAllEmployees(): Promise<{
   };
 }
 
-export async function getAllEmployeeById(
+export async function getEmployeeById(
   id: string,
   authenticated = true,
 ): Promise<{ status: number; ok: boolean; body: ApiResponse<EmployeeData> }> {
