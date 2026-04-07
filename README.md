@@ -14,15 +14,15 @@ API REST para gestão de Recursos Humanos, desenvolvida com NestJS, TypeORM e Po
 
 ## Módulos
 
-| Módulo | Descrição |
-|---|---|
-| `auth` | Autenticação JWT (login, refresh, logout) |
-| `users` | Gestão de usuários do sistema |
-| `employees` | Gestão de funcionários |
-| `departments` | Gestão de departamentos |
-| `positions` | Gestão de cargos |
-| `vacations` | Solicitação e gestão de férias |
-| `requests` | Solicitações diversas |
+| Módulo        | Descrição                                 |
+| ------------- | ----------------------------------------- |
+| `auth`        | Autenticação JWT (login, refresh, logout) |
+| `users`       | Gestão de usuários do sistema             |
+| `employees`   | Gestão de funcionários                    |
+| `departments` | Gestão de departamentos                   |
+| `positions`   | Gestão de cargos                          |
+| `vacations`   | Solicitação e gestão de férias            |
+| `requests`    | Solicitações diversas                     |
 
 ## Pré-requisitos
 
@@ -98,3 +98,4 @@ O projeto usa Conventional Commits via Commitizen:
 npm run commit
 Licença
 UNLICENSED
+```
