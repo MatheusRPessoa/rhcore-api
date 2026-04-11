@@ -1,5 +1,6 @@
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { UserRole } from 'src/common/enums/user-role.enum';
 
 @Entity('USUARIOS')
 export class User extends BaseEntity {
@@ -29,4 +30,12 @@ export class User extends BaseEntity {
     nullable: true,
   })
   REFRESH_TOKEN: string | null;
+
+  @Column({
+    name: 'ROLE',
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.EMPLOYEE,
+  })
+  ROLE: UserRole;
 }
