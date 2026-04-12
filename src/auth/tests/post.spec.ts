@@ -1,7 +1,7 @@
 import { AppDataSource } from '../../config/database/data-source';
 import { AuthHelper } from './helpers/auth.helper';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3001';
 
 describe('POST /auth/login', () => {
   beforeAll(async () => {
@@ -26,6 +26,7 @@ describe('POST /auth/login', () => {
     expect(body.succeeded).toBe(true);
     expect(body.data.access_token).toBeDefined();
     expect(body.data.refresh_token).toBeDefined();
+    expect(body.data.role).toBeDefined();
     expect(body.message).toBe('Login realizado com sucesso.');
   });
 

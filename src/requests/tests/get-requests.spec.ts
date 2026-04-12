@@ -33,7 +33,7 @@ describe('GET /requests', () => {
   });
 
   it('deve retornar 401 quando não autenticado', async () => {
-    const response = await fetch('http://localhost:3000/requests', {
+    const response = await fetch('http://localhost:3001/requests', {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });

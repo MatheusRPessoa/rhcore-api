@@ -4,7 +4,7 @@ import { ApiResponse } from 'src/common/tests/helpers/api-response.helper';
 import { VacationStatusEnum } from 'src/vacations/enums/vacation-status.enum';
 import { DataSource } from 'typeorm';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3001';
 const VACATIONS_ENDPOINT = '/vacations';
 const EMPLOYEES_ENDPOINT = '/employees';
 

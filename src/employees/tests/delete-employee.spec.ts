@@ -6,7 +6,7 @@ import {
   initTestDataSource,
 } from './helpers/employee.helper';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3001';
 
 describe('DELETE /employees/:id', () => {
   beforeAll(async () => {
