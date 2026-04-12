@@ -4,7 +4,11 @@ import * as bcrypt from 'bcrypt';
 
 interface AuthResponse {
   succeeded: boolean;
-  data: { access_token: string; refresh_token: string };
+  data: {
+    access_token: string;
+    refresh_token: string;
+    role: string;
+  };
   message: string;
 }
 
@@ -31,7 +35,7 @@ export class AuthHelper {
   }
 
   static async authenticate() {
-    const response = await fetch('http://localhost:3000/auth/login', {
+    const response = await fetch('http://localhost:3001/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: 'admin', password: 'admin123' }),

@@ -6,7 +6,7 @@ import {
 } from './helpers/user.helper';
 import { AuthHelper } from '../../auth/tests/helpers/auth.helper';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3001';
 
 describe('DELETE /users/:id', () => {
   beforeAll(async () => {

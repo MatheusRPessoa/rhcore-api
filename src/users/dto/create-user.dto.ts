@@ -6,6 +6,7 @@ import {
   MinLength,
   MaxLength,
   IsEnum,
+  IsOptional,
 } from 'class-validator';
 import { UserRole } from 'src/common/enums/user-role.enum';
 
@@ -39,6 +40,6 @@ export class CreateUserDto {
   @IsEnum(UserRole, {
     message: 'O valor informado para o campo ROLE é inválido',
   })
-  @IsNotEmpty({ message: 'O campo ROLE é obrigatório' })
-  ROLE: UserRole;
+  @IsOptional()
+  ROLE?: UserRole;
 }

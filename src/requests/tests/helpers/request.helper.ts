@@ -4,7 +4,7 @@ import { ApiResponse } from 'src/common/tests/helpers/api-response.helper';
 import { RequestTypeEnum } from 'src/requests/enums/request-type.enum';
 import { DataSource } from 'typeorm';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3001';
 const REQUEST_ENDPOINT = '/requests';
 const EMPLOYEES_ENDPOINT = '/employees';
 
