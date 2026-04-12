@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -7,6 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { BaseEntityStatusEnum } from 'src/common/enums/base-entity-status.enum';
 
 export class CreateDepartmentDto {
   @ApiProperty({ example: 'Tecnologia da Informação' })
@@ -34,4 +36,11 @@ export class CreateDepartmentDto {
   @IsUUID('4', { message: 'O ID do departamento pai deve ser um UUID válido' })
   @IsOptional()
   DEPARTAMENTO_PAI_ID?: string;
+
+  @ApiPropertyOptional({ example: BaseEntityStatusEnum.ATIVO })
+  @IsEnum(BaseEntityStatusEnum, {
+    message: 'O status deve ser um valor válido',
+  })
+  @IsOptional()
+  STATUS?: BaseEntityStatusEnum;
 }

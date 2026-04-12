@@ -55,6 +55,10 @@ export class UsersService {
   ): Promise<User> {
     const user = await this.findOne(id);
 
+    if (dto.SENHA) {
+      dto.SENHA = await bcrypt.hash(dto.SENHA, 10);
+    }
+
     Object.assign(user, dto);
 
     if (updatedBy) {
