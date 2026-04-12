@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseSuccessResponseDto } from 'src/common/dto/base-response.dto';
+import { UserRole } from 'src/common/enums/user-role.enum';
 
 export class UserDataDto {
   @ApiProperty({ example: 'a3bb189e-8bf9-3888-9912-ace4e6543002' })
@@ -19,6 +20,9 @@ export class UserDataDto {
 
   @ApiProperty({ example: '2026-01-01T00:00:00.000Z' })
   CRIADO_EM: Date;
+
+  @ApiProperty({ example: 'EMPLOYEE', enum: UserRole })
+  ROLE: UserRole;
 }
 
 export class UserResponseDto extends BaseSuccessResponseDto {
