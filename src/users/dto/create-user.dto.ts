@@ -49,5 +49,5 @@ export class CreateUserDto {
     message: 'O valor informado para o campo STATUS é inválido',
   })
   @IsOptional()
-  STATUS?: BaseEntityStatusEnum = BaseEntityStatusEnum.ATIVO;
+  STATUS?: BaseEntityStatusEnum;
 }
