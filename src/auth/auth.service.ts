@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { UserRole } from 'src/common/enums/user-role.enum';
 
 @Injectable()
 export class AuthService {
@@ -17,12 +18,16 @@ export class AuthService {
       username,
       password,
     );
-    const tokens = await this.generateTokens(user.ID, user.NOME_USUARIO);
+    const tokens = await this.generateTokens(
+      user.ID,
+      user.NOME_USUARIO,
+      user.ROLE,
+    );
     await this.saveRefreshToken(user.ID, tokens.refresh_token);
 
     return {
       succeeded: true,
-      data: tokens,
+      data: { ...tokens, role: user.ROLE },
       message: 'Login realizado com sucesso.',
     };
   }
@@ -35,7 +40,11 @@ export class AuthService {
     const tokenMatch = await bcrypt.compare(refresh_token, user.REFRESH_TOKEN);
     if (!tokenMatch) throw new UnauthorizedException('Refresh token inválido');
 
-    const tokens = await this.generateTokens(user.ID, user.NOME_USUARIO);
+    const tokens = await this.generateTokens(
+      user.ID,
+      user.NOME_USUARIO,
+      user.ROLE,
+    );
     await this.saveRefreshToken(user.ID, tokens.refresh_token);
     return {
       succeeded: true,
@@ -58,8 +67,12 @@ export class AuthService {
     return { succeeded: true, data: user, message: 'Usuário autenticado' };
   }
 
-  private async generateTokens(userId: string, username: string) {
-    const payload = { username, sub: userId };
+  private async generateTokens(
+    userId: string,
+    username: string,
+    role: UserRole,
+  ) {
+    const payload = { username, sub: userId, role };
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(payload, { expiresIn: '1d' }),
       this.jwtService.signAsync(payload, {
