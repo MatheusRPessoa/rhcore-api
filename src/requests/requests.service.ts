@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from './entities/request.entity';
 import { Repository } from 'typeorm';
 import { Employee } from 'src/employees/entities/employee.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class RequestsService {
@@ -64,15 +65,30 @@ export class RequestsService {
       ...(dto.DATA_RESPOSTA !== undefined && {
         DATA_RESPOSTA: new Date(dto.DATA_RESPOSTA),
       }),
-      ...(dto.APROVADO_POR_ID !== undefined && {
-        APROVADO_POR: { ID: dto.APROVADO_POR_ID } as Employee,
-      }),
       ATUALIZADO_POR: updateBy,
     });
 
-    const saved = await this.requestRepository.save(request);
+    await this.requestRepository.save(request);
     this.logger.log(`Solicitação ${id} atualizada por ${updateBy}`);
-    return saved;
+    return this.findOne(id);
+  }
+
+  async approve(
+    id: string,
+    approverId: string,
+    approvedBy: string,
+  ): Promise<Request> {
+    const request = await this.findOne(id);
+
+    Object.assign(request, {
+      APROVADO_POR: { ID: approverId } as User,
+      DATA_RESPOSTA: new Date(),
+      ATUALIZADO_POR: approvedBy,
+    });
+
+    await this.requestRepository.save(request);
+    this.logger.log(`Solicitação ${id} aprovada por ${approvedBy}`);
+    return this.findOne(id);
   }
 
   async remove(id: string, deletedBy: string): Promise<void> {

@@ -116,6 +116,32 @@ export class RequestsController {
     };
   }
 
+  @Patch(':id/approve')
+  @ApiOperation({ summary: 'Aprovar solicitação' })
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    example: 'a3bb189e-8bf9-3888-9912-ace4e6543002',
+  })
+  @ApiResponse({ status: 200, type: RequestResponseDto })
+  @ApiResponse({ status: 401, type: UnauthorizedResponseDto })
+  @ApiResponse({ status: 404, type: NotFoundResponseDto })
+  async approve(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<RequestResponseDto> {
+    const request = await this.requestsService.approve(
+      id,
+      req.user.sub,
+      req.user.username,
+    );
+    return {
+      succeeded: true,
+      data: request,
+      message: 'Solicitação aprovada com sucesso.',
+    };
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Remover solicitação' })
   @ApiParam({

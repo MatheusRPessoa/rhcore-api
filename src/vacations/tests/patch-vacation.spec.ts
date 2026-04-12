@@ -6,7 +6,6 @@ import {
   setupDefaultEmployee,
 } from './helpers/vacation.helper';
 import { AuthHelper } from 'src/auth/tests/helpers/auth.helper';
-import { STATUS_CODES } from 'http';
 
 const BASE_URL = 'http://localhost:3001';
 

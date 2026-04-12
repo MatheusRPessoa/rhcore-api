@@ -1,14 +1,14 @@
 import { AppDataSource } from 'src/config/database/data-source';
 import {
+  approveRequest,
   cleanupAll,
-  createVacation,
-  getVacationById,
+  createRequest,
   initTestDataSource,
   setupDefaultEmployee,
-} from './helpers/vacation.helper';
+} from './helpers/request.helper';
 import { AuthHelper } from 'src/auth/tests/helpers/auth.helper';
 
-describe('GET /vacations/:id', () => {
+describe('PATCH /requests/:id/approve', () => {
   beforeAll(async () => {
     await AppDataSource.initialize();
     initTestDataSource(AppDataSource);
@@ -21,20 +21,21 @@ describe('GET /vacations/:id', () => {
     await AppDataSource.destroy();
   });
 
-  it('deve buscar férias por ID com sucesso (200)', async () => {
-    const created = await createVacation();
+  it('deve aprovar solicitação com sucesso (200)', async () => {
+    const created = await createRequest();
     const id = created.body.data!.ID;
 
-    const { status, body } = await getVacationById(id);
+    const { status, body } = await approveRequest(id);
 
     expect(status).toBe(200);
     expect(body.succeeded).toBe(true);
-    expect(body.data?.ID).toBe(id);
-    expect(body.message).toBe('Férias encontradas com sucesso.');
+    expect(body.data?.APROVADO_POR).not.toBeNull();
+    expect(body.data?.DATA_RESPOSTA).not.toBeNull();
+    expect(body.message).toBe('Solicitação aprovada com sucesso.');
   });
 
-  it('deve retornar 404 quando férias não existem', async () => {
-    const { status, body } = await getVacationById(
+  it('deve retornar 404 quando solicitação não existe', async () => {
+    const { status, body } = await approveRequest(
       '00000000-0000-0000-0000-000000000000',
     );
 
@@ -43,10 +44,10 @@ describe('GET /vacations/:id', () => {
   });
 
   it('deve retornar 401 quando não autenticado', async () => {
-    const { status, body } = await getVacationById(
-      '00000000-0000-0000-0000-000000000000',
-      false,
-    );
+    const created = await createRequest();
+    const id = created.body.data!.ID;
+
+    const { status, body } = await approveRequest(id, false);
 
     expect(status).toBe(401);
     expect(body.succeeded).toBe(false);
