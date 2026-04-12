@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { RequestTypeEnum } from '../enums/request-type.enum';
 import { Employee } from 'src/employees/entities/employee.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity('SOLICITACOES')
 export class Request extends BaseEntity {
@@ -44,7 +45,7 @@ export class Request extends BaseEntity {
   })
   DATA_RESPOSTA: Date | null;
 
-  @ManyToOne(() => Employee)
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'APROVADO_POR_ID' })
-  APROVADO_POR: Employee;
+  APROVADO_POR: User | null;
 }

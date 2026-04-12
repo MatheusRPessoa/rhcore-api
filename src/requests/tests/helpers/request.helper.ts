@@ -1,4 +1,3 @@
-import { authenticate } from 'passport';
 import { AuthHelper } from 'src/auth/tests/helpers/auth.helper';
 import { ApiResponse } from 'src/common/tests/helpers/api-response.helper';
 import { RequestTypeEnum } from 'src/requests/enums/request-type.enum';
@@ -19,7 +18,7 @@ export interface RequestData {
   OBSERVACAO: string | null;
   DATA_SOLICITACAO: string;
   DATA_RESPOSTA: string | null;
-  APROVADO_POR: { ID: string; NOME: string; MATRICULA: string } | null;
+  APROVADO_POR: { ID: string; NOME_USUARIO: string; EMAIL: string } | null;
   CRIADO_POR: string;
   CRIADO_EM: string;
 }
@@ -114,6 +113,26 @@ export async function getRequestById(
 ): Promise<{ status: number; ok: boolean; body: ApiResponse<RequestData> }> {
   const response = await fetch(`${BASE_URL}${REQUEST_ENDPOINT}/${id}`, {
     method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(authenticated ? AuthHelper.getAuthHeader() : {}),
+    },
+  });
+
+  const data = (await response.json()) as ApiResponse<RequestData>;
+  return {
+    status: response.status,
+    ok: response.ok,
+    body: data,
+  };
+}
+
+export async function approveRequest(
+  id: string,
+  authenticated = true,
+): Promise<{ status: number; ok: boolean; body: ApiResponse<RequestData> }> {
+  const response = await fetch(`${BASE_URL}${REQUEST_ENDPOINT}/${id}/approve`, {
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
       ...(authenticated ? AuthHelper.getAuthHeader() : {}),
