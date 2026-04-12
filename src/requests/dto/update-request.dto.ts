@@ -4,9 +4,7 @@ import {
   IsDateString,
   IsEnum,
   IsOptional,
-  IsPort,
   IsString,
-  IsUUID,
   MaxLength,
 } from 'class-validator';
 
@@ -35,9 +33,4 @@ export class UpdateRequestDto {
   @IsDateString({}, { message: 'A data de resposta deve ser uma data válida' })
   @IsOptional()
   DATA_RESPOSTA?: string;
-
-  @ApiPropertyOptional({ example: 'a3bb189e-8bf9-3888-9912-ace4e6543002' })
-  @IsUUID('4', { message: 'O ID do aprovador deve ser um UUID válido' })
-  @IsOptional()
-  APROVADO_POR_ID?: string;
 }

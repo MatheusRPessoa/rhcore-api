@@ -1,8 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateVacationDto } from './create-vacation.dto';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsDate,
   IsDateString,
   IsEnum,
   IsOptional,

@@ -13,6 +13,17 @@ export class RequestEmployeeDto {
   MATRICULA: string;
 }
 
+export class RequestApproverDto {
+  @ApiProperty({ example: 'a3bb189e-8bf9-3888-9912-ace4e6543002' })
+  ID: string;
+
+  @ApiProperty({ example: 'admin' })
+  NOME_USUARIO: string;
+
+  @ApiProperty({ example: 'admin@empresa.com' })
+  EMAIL: string;
+}
+
 export class RequestDataDto {
   @ApiProperty({ example: 'a3bb189e-8bf9-3888-9912-ace4e6543002' })
   ID: string;
@@ -35,8 +46,8 @@ export class RequestDataDto {
   @ApiPropertyOptional({ example: '2025-07-15' })
   DATA_RESPOSTA: Date | null;
 
-  @ApiPropertyOptional({ type: () => RequestEmployeeDto })
-  APROVADO_POR: RequestEmployeeDto | null;
+  @ApiPropertyOptional({ type: () => RequestApproverDto })
+  APROVADO_POR: RequestApproverDto | null;
 
   @ApiProperty({ example: 'admin' })
   CRIADO_POR: string;

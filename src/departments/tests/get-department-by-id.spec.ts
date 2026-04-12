@@ -1,4 +1,3 @@
-import { authenticate } from 'passport';
 import { AuthHelper } from '../../auth/tests/helpers/auth.helper';
 import { AppDataSource } from '../../config/database/data-source';
 import {

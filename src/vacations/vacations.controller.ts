@@ -51,7 +51,7 @@ export class VacationsController {
     const vacation = await this.vacationsService.create(dto, req.user.username);
     return {
       succeeded: true,
-      data: vacation as any,
+      data: vacation,
       message: 'Férias solicitadas com sucesso.',
     };
   }
@@ -64,7 +64,7 @@ export class VacationsController {
     const vacations = await this.vacationsService.findAll();
     return {
       succeeded: true,
-      data: vacations as any,
+      data: vacations,
       message: 'Férias listadas com sucesso.',
     };
   }
