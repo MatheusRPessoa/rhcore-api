@@ -6,7 +6,7 @@ import {
 } from './helpers/employee.helper';
 import { AuthHelper } from 'src/auth/tests/helpers/auth.helper';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3001';
 
 describe('PATCH /employees/:id', () => {
   beforeAll(async () => {

@@ -5,7 +5,10 @@ import {
   IsString,
   MinLength,
   MaxLength,
+  IsEnum,
+  IsOptional,
 } from 'class-validator';
+import { UserRole } from 'src/common/enums/user-role.enum';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'joao.silva' })
@@ -29,4 +32,14 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'A senha é obrigatória' })
   @MinLength(6, { message: 'A senha deve ter no mínimo 6 caracteres' })
   SENHA: string;
+
+  @ApiProperty({
+    example: UserRole.ADMIN,
+    enum: UserRole,
+  })
+  @IsEnum(UserRole, {
+    message: 'O valor informado para o campo ROLE é inválido',
+  })
+  @IsOptional()
+  ROLE?: UserRole;
 }
