@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -8,6 +8,7 @@ import {
   IsEnum,
   IsOptional,
 } from 'class-validator';
+import { BaseEntityStatusEnum } from 'src/common/enums/base-entity-status.enum';
 import { UserRole } from 'src/common/enums/user-role.enum';
 
 export class CreateUserDto {
@@ -42,4 +43,11 @@ export class CreateUserDto {
   })
   @IsOptional()
   ROLE?: UserRole;
+
+  @ApiPropertyOptional({ example: BaseEntityStatusEnum.ATIVO })
+  @IsEnum(BaseEntityStatusEnum, {
+    message: 'O valor informado para o campo STATUS é inválido',
+  })
+  @IsOptional()
+  STATUS?: BaseEntityStatusEnum;
 }
