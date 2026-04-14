@@ -116,4 +116,32 @@ export class UsersService {
   ): Promise<void> {
     await this.usersRepository.update(userId, { REFRESH_TOKEN: refreshToken });
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { EMAIL: email } });
+  }
+
+  async saveResetToken(
+    userId: string,
+    token: string,
+    expires: Date,
+  ): Promise<void> {
+    await this.usersRepository.update(userId, {
+      RESET_PASSWORD_TOKEN: token,
+      RESET_PASSWORD_EXPIRES: expires,
+    });
+  }
+
+  async clearResetToken(userId: string): Promise<void> {
+    await this.usersRepository.update(userId, {
+      RESET_PASSWORD_TOKEN: null,
+      RESET_PASSWORD_EXPIRES: null,
+    });
+  }
+
+  async findByResetToken(token: string): Promise<User | null> {
+    return this.usersRepository.findOne({
+      where: { RESET_PASSWORD_TOKEN: token },
+    });
+  }
 }

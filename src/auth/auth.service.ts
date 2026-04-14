@@ -4,6 +4,9 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from 'src/common/enums/user-role.enum';
+import { MailerService } from '@nestjs-modules/mailer';
+import * as crypto from 'crypto';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +14,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private mailerService: MailerService,
   ) {}
 
   async login(username: string, password: string) {
@@ -59,6 +63,63 @@ export class AuthService {
       succeeded: true,
       data: null,
       message: 'Logout realizado com sucesso',
+    };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      return {
+        succeeded: true,
+        data: null,
+        message:
+          'Instruções para recuperação de senha enviadas para o e-mail cadastrado',
+      };
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 3600000);
+
+    await this.usersService.saveResetToken(user.ID, token, expires);
+
+    const resetUrl = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/reset-password?token=${token}`;
+
+    await this.mailerService.sendMail({
+      to: user.EMAIL,
+      subject: 'Recuperação de senha',
+      text: `Você solicitou a recuperação de senha. Clique no link abaixo para resetar sua senha:\n\n${resetUrl}\n\nSe você não solicitou, ignore este e-mail.`,
+    });
+
+    return {
+      succeeded: true,
+      data: null,
+      message:
+        'Instruções para recuperação de senha enviadas para o e-mail cadastrado',
+    };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.usersService.findByResetToken(token);
+
+    if (
+      !user ||
+      !user.RESET_PASSWORD_EXPIRES ||
+      user.RESET_PASSWORD_EXPIRES < new Date()
+    ) {
+      throw new BadRequestException(
+        'Token de reset de senha inválido ou expirado',
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.usersService.update(user.ID, { SENHA: hashedPassword });
+    await this.usersService.clearResetToken(user.ID);
+
+    return {
+      succeeded: true,
+      data: null,
+      message: 'Senha resetada com sucesso',
     };
   }
 
