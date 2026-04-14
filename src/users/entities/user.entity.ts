@@ -38,4 +38,19 @@ export class User extends BaseEntity {
     default: UserRole.EMPLOYEE,
   })
   ROLE: UserRole;
+
+  @Column({
+    name: 'RESET_PASSWORD',
+    nullable: true,
+    type: 'varchar',
+    length: 255,
+  })
+  RESET_PASSWORD_TOKEN: string | null;
+
+  @Column({
+    name: 'RESET_PASSWORD_EXPIRES',
+    nullable: true,
+    type: 'timestamp',
+  })
+  RESET_PASSWORD_EXPIRES: Date | null;
 }

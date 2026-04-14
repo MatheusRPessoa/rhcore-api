@@ -5,6 +5,8 @@ import { LoginDto } from './dto/login.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import type { AuthenticatedRequest } from 'src/common/interfaces/authenticated-request.interface';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -66,5 +68,39 @@ export class AuthController {
   @ApiBearerAuth('JWT-auth')
   async me(@Req() req: AuthenticatedRequest) {
     return this.authService.me(req.user.sub);
+  }
+
+  @Post('forgot-password')
+  @ApiOperation({
+    summary: 'Solicitar recuperação de senha',
+    description: 'Envia um e-mail com instruções para resetar a senha',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'E-mail de recuperação enviado (se o usuário existir)',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'E-mail inválido',
+  })
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto.EMAIL);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({
+    summary: 'Resetar senha',
+    description: 'Reseta a senha usando um token de recuperação',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Senha resetada com sucesso',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Token de reset de senha inválido ou expirado',
+  })
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto.token, dto.newPassword);
   }
 }
