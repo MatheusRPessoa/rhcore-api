@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -8,7 +7,6 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { BaseEntityStatusEnum } from 'src/common/enums/base-entity-status.enum';
 
 export class CreateDepartmentDto {
   @ApiProperty({ example: 'Tecnologia da Informação' })
