@@ -50,6 +50,12 @@ jobs:
             'DB_NAME=rhcore_db' \
             'JWT_SECRET=ci-jwt-secret' \
             'JWT_REFRESH_SECRET=ci-jwt-refresh-secret' \
+            'FRONTEND_URL=http://localhost:3000' \
+            'MAIL_HOST=localhost' \
+            'MAIL_PORT=1025' \
+            'MAIL_USER=ci' \
+            'MAIL_PASS=ci' \
+            'MAIL_FROM=noreply@rhcore.com' \
             > .env
 
       - name: Enable uuid-ossp extension

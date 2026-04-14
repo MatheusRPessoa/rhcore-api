@@ -85,9 +85,8 @@ export class AuthService {
 
     await this.usersService.saveResetToken(user.ID, token, expires);
 
-    const resetUrl = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/reset-password?token=${token}`;
-
     try {
+      const resetUrl = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/reset-password?token=${token}`;
       await this.mailerService.sendMail({
         to: user.EMAIL,
         subject: 'Recuperação de senha',
