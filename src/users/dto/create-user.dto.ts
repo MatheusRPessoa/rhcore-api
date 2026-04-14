@@ -43,11 +43,4 @@ export class CreateUserDto {
   })
   @IsOptional()
   ROLE?: UserRole;
-
-  @ApiPropertyOptional({ example: BaseEntityStatusEnum.ATIVO })
-  @IsEnum(BaseEntityStatusEnum, {
-    message: 'O valor informado para o campo STATUS é inválido',
-  })
-  @IsOptional()
-  STATUS?: BaseEntityStatusEnum;
 }
