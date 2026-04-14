@@ -36,11 +36,4 @@ export class CreateDepartmentDto {
   @IsUUID('4', { message: 'O ID do departamento pai deve ser um UUID válido' })
   @IsOptional()
   DEPARTAMENTO_PAI_ID?: string;
-
-  @ApiPropertyOptional({ example: BaseEntityStatusEnum.ATIVO })
-  @IsEnum(BaseEntityStatusEnum, {
-    message: 'O status deve ser um valor válido',
-  })
-  @IsOptional()
-  STATUS?: BaseEntityStatusEnum;
 }
