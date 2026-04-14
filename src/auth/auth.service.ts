@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -10,6 +10,8 @@ import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -85,11 +87,18 @@ export class AuthService {
 
     const resetUrl = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/reset-password?token=${token}`;
 
-    await this.mailerService.sendMail({
-      to: user.EMAIL,
-      subject: 'Recuperação de senha',
-      text: `Você solicitou a recuperação de senha. Clique no link abaixo para resetar sua senha:\n\n${resetUrl}\n\nSe você não solicitou, ignore este e-mail.`,
-    });
+    try {
+      await this.mailerService.sendMail({
+        to: user.EMAIL,
+        subject: 'Recuperação de senha',
+        text: `Você solicitou a recuperação de senha. Clique no link abaixo para resetar sua senha:\n\n${resetUrl}\n\nSe você não solicitou, ignore este e-mail.`,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Falha ao enviar e-mail de recuperação para ${user.EMAIL}`,
+        error,
+      );
+    }
 
     return {
       succeeded: true,
