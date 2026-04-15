@@ -87,12 +87,13 @@ export class AuthService {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
       const resetUrl = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/reset-password?token=${token}`;
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: 'RHCore <onboarding@resend.dev>',
         to: user.EMAIL,
         subject: 'Recuperação de senha',
         text: `Você solicitou a recuperação de senha. Clique no link abaixo para resetar sua senha:\n\n${resetUrl}\n\nSe você não solicitou, ignore este e-mail.`,
       });
+      this.logger.log(`Resend result: ${JSON.stringify(result)}`);
     } catch (error) {
       this.logger.error(
         `Falha ao enviar e-mail de recuperação para ${user.EMAIL}: ${JSON.stringify(error)}`,
