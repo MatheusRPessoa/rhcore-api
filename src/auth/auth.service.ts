@@ -95,8 +95,7 @@ export class AuthService {
       });
     } catch (error) {
       this.logger.error(
-        `Falha ao enviar e-mail de recuperação para ${user.EMAIL}`,
-        error,
+        `Falha ao enviar e-mail de recuperação para ${user.EMAIL}: ${JSON.stringify(error)}`,
       );
     }
 
