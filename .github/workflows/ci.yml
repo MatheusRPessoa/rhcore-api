@@ -32,7 +32,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install dependencies
@@ -51,11 +51,7 @@ jobs:
             'JWT_SECRET=ci-jwt-secret' \
             'JWT_REFRESH_SECRET=ci-jwt-refresh-secret' \
             'FRONTEND_URL=http://localhost:3000' \
-            'MAIL_HOST=localhost' \
-            'MAIL_PORT=1025' \
-            'MAIL_USER=ci' \
-            'MAIL_PASS=ci' \
-            'MAIL_FROM=noreply@rhcore.com' \
+            'RESEND_API_KEY=ci-fake-key' \
             > .env
 
       - name: Enable uuid-ossp extension

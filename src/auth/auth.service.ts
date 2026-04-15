@@ -4,9 +4,9 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from 'src/common/enums/user-role.enum';
-import { MailerService } from '@nestjs-modules/mailer';
 import * as crypto from 'crypto';
 import { BadRequestException } from '@nestjs/common';
+import { Resend } from 'resend';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,6 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    private mailerService: MailerService,
   ) {}
 
   async login(username: string, password: string) {
@@ -86,8 +85,10 @@ export class AuthService {
     await this.usersService.saveResetToken(user.ID, token, expires);
 
     try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
       const resetUrl = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/reset-password?token=${token}`;
-      await this.mailerService.sendMail({
+      await resend.emails.send({
+        from: 'RHCore <onboarding@resend.dev>',
         to: user.EMAIL,
         subject: 'Recuperação de senha',
         text: `Você solicitou a recuperação de senha. Clique no link abaixo para resetar sua senha:\n\n${resetUrl}\n\nSe você não solicitou, ignore este e-mail.`,
