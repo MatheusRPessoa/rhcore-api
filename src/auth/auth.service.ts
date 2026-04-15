@@ -120,8 +120,7 @@ export class AuthService {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.usersService.update(user.ID, { SENHA: hashedPassword });
+    await this.usersService.update(user.ID, { SENHA: newPassword });
     await this.usersService.clearResetToken(user.ID);
 
     return {
