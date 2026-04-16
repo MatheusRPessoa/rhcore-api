@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { UserRole } from 'src/common/enums/user-role.enum';
 import * as crypto from 'crypto';
 import { BadRequestException } from '@nestjs/common';
-import { Resend } from 'resend';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +16,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private mailerService: MailerService,
   ) {}
 
   async login(username: string, password: string) {
@@ -85,15 +86,13 @@ export class AuthService {
     await this.usersService.saveResetToken(user.ID, token, expires);
 
     try {
-      const resend = new Resend(process.env.RESEND_API_KEY);
       const resetUrl = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/reset-password?token=${token}`;
-      const result = await resend.emails.send({
-        from: 'RHCore <onboarding@resend.dev>',
+      await this.mailerService.sendMail({
         to: user.EMAIL,
         subject: 'Recuperação de senha',
         text: `Você solicitou a recuperação de senha. Clique no link abaixo para resetar sua senha:\n\n${resetUrl}\n\nSe você não solicitou, ignore este e-mail.`,
       });
-      this.logger.log(`Resend result: ${JSON.stringify(result)}`);
+      this.logger.log(`E-mail de recuperação enviado para ${user.EMAIL}`);
     } catch (error) {
       this.logger.error(
         `Falha ao enviar e-mail de recuperação para ${user.EMAIL}: ${JSON.stringify(error)}`,
