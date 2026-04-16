@@ -51,7 +51,11 @@ jobs:
             'JWT_SECRET=ci-jwt-secret' \
             'JWT_REFRESH_SECRET=ci-jwt-refresh-secret' \
             'FRONTEND_URL=http://localhost:3000' \
-            'RESEND_API_KEY=ci-fake-key' \
+            'MAIL_HOST=smtp.gmail.com' \
+            'MAIL_PORT=587' \
+            'MAIL_USER=ci@ci.com' \
+            'MAIL_PASS=ci-fake-pass' \
+            'MAIL_FROM=RHCore <ci@ci.com>' \
             > .env
 
       - name: Enable uuid-ossp extension
