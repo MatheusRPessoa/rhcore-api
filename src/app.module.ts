@@ -12,6 +12,7 @@ import { DepartmentsModule } from './departments/departments.module';
 import { PositionsModule } from './positions/positions.module';
 import { VacationsModule } from './vacations/vacations.module';
 import { RequestsModule } from './requests/requests.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -62,6 +63,25 @@ import { RequestsModule } from './requests/requests.module';
         database: configService.get<string>('DB_NAME'),
         autoLoadEntities: true,
         synchronize: false,
+      }),
+    }),
+
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.getOrThrow<string>('MAIL_HOST'),
+          port: configService.getOrThrow<number>('MAIL_PORT'),
+          secure: false,
+          auth: {
+            user: configService.getOrThrow<string>('MAIL_USER'),
+            pass: configService.getOrThrow<string>('MAIL_PASS'),
+          },
+        },
+        defaults: {
+          from: configService.getOrThrow<string>('MAIL_FROM'),
+        },
       }),
     }),
 
