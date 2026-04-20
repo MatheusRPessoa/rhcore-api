@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { UserRole } from 'src/common/enums/user-role.enum';
+import { Employee } from 'src/employees/entities/employee.entity';
 
 @Entity('USUARIOS')
 export class User extends BaseEntity {
@@ -53,4 +54,16 @@ export class User extends BaseEntity {
     type: 'timestamp',
   })
   RESET_PASSWORD_EXPIRES: Date | null;
+
+  @OneToOne(() => Employee, { nullable: true, eager: false })
+  @JoinColumn({ name: 'FUNCIONARIO_ID' })
+  FUNCIONARIO: Employee | null;
+
+  @Column({
+    name: 'FUNCIONARIO_ID',
+    type: 'uuid',
+    nullable: true,
+    unique: true,
+  })
+  FUNCIONARIO_ID: string | null;
 }

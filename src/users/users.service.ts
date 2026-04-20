@@ -1,15 +1,18 @@
 import {
+  BadRequestException,
+  ConflictException,
   Injectable,
   Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Employee } from 'src/employees/entities/employee.entity';
 
 @Injectable()
 export class UsersService {
@@ -18,19 +21,45 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(Employee)
+    private readonly employeesRepository: Repository<Employee>,
   ) {}
 
   async create(dto: CreateUserDto, createdBy: string): Promise<User> {
-    const hashed = await bcrypt.hash(dto.SENHA, 10);
+    const { FUNCIONARIO_ID, ...rest } = dto;
+
+    let email = rest.EMAIL;
+
+    if (FUNCIONARIO_ID) {
+      const employee = await this.findEmployeeOrFail(FUNCIONARIO_ID);
+      email = email ?? employee.EMAIL;
+    }
+
+    if (!email) {
+      throw new BadRequestException(
+        'Informe o e-mail ou vincule um funcionário.',
+      );
+    }
+
+    const hashed = await bcrypt.hash(rest.SENHA, 10);
     const user = this.usersRepository.create({
-      ...dto,
+      ...rest,
+      EMAIL: email,
       SENHA: hashed,
       CRIADO_POR: createdBy,
+      FUNCIONARIO_ID: FUNCIONARIO_ID ?? null,
     });
 
-    const saved = await this.usersRepository.save(user);
-    this.logger.log(`Usuário ${saved.ID} criado por ${createdBy}`);
-    return saved;
+    try {
+      const saved = await this.usersRepository.save(user);
+      this.logger.log(`Usuário ${saved.ID} criado por ${createdBy}`);
+      return saved;
+    } catch (err) {
+      if (err instanceof QueryFailedError && (err as any).code === '23505') {
+        throw new ConflictException('Já existe um usuário com esse e-mail.');
+      }
+      throw err;
+    }
   }
 
   async findAll(): Promise<User[]> {
@@ -54,6 +83,10 @@ export class UsersService {
     updatedBy?: string,
   ): Promise<User> {
     const user = await this.findOne(id);
+
+    if (dto.FUNCIONARIO_ID) {
+      await this.findEmployeeOrFail(dto.FUNCIONARIO_ID);
+    }
 
     if (dto.SENHA) {
       dto.SENHA = await bcrypt.hash(dto.SENHA, 10);
@@ -143,5 +176,20 @@ export class UsersService {
     return this.usersRepository.findOne({
       where: { RESET_PASSWORD_TOKEN: token },
     });
+  }
+
+  private async findEmployeeOrFail(employeeId: string): Promise<Employee> {
+    const employee = await this.employeesRepository.findOne({
+      where: { ID: employeeId },
+    });
+
+    if (!employee) {
+      this.logger.warn(`Funcionário ${employeeId} não encontrado`);
+      throw new NotFoundException(
+        `Funcionário com ID ${employeeId} não encontrado.`,
+      );
+    }
+
+    return employee;
   }
 }

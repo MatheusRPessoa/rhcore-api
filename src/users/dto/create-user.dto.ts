@@ -1,17 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
-  IsNotEmpty,
   IsString,
   MinLength,
   MaxLength,
   IsEnum,
   IsOptional,
+  IsUUID,
+  IsNotEmpty,
 } from 'class-validator';
 import { UserRole } from 'src/common/enums/user-role.enum';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'joao.silva' })
+  @ApiPropertyOptional({ example: 'joao.silva' })
   @IsString({ message: 'O valor informado deve ser do tipo texto' })
   @IsNotEmpty({ message: 'O nome de usuário é obrigatório' })
   @MinLength(3, {
@@ -22,18 +23,21 @@ export class CreateUserDto {
   })
   NOME_USUARIO: string;
 
-  @ApiProperty({ example: 'joao@email.com' })
+  @ApiPropertyOptional({
+    example: 'joao@email.com',
+    description: 'Obrigatório quando FUNCIONARIO_ID não for informado',
+  })
   @IsEmail({}, { message: 'Informe um e-mail válido' })
-  @IsNotEmpty({ message: 'O e-mail é obrigatório' })
-  EMAIL: string;
+  @IsOptional()
+  EMAIL?: string;
 
-  @ApiProperty({ example: 'admin123' })
+  @ApiPropertyOptional({ example: 'admin123' })
   @IsString({ message: 'O valor informado deve ser do tipo texto' })
   @IsNotEmpty({ message: 'A senha é obrigatória' })
   @MinLength(6, { message: 'A senha deve ter no mínimo 6 caracteres' })
   SENHA: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: UserRole.ADMIN,
     enum: UserRole,
   })
@@ -42,4 +46,13 @@ export class CreateUserDto {
   })
   @IsOptional()
   ROLE?: UserRole;
+
+  @ApiPropertyOptional({
+    example: 'a3bb189e-8bf9-3888-9912-ace4e6543002',
+    description:
+      'ID do funcionário vinculado. Quando informado, o e-mail é herdado do funcionário.',
+  })
+  @IsUUID('4', { message: 'O FUNCIONARIO_ID deve ser um UUID válido' })
+  @IsOptional()
+  FUNCIONARIO_ID?: string;
 }
