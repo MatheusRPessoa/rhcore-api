@@ -33,7 +33,7 @@ export class AuthService {
 
     return {
       succeeded: true,
-      data: { ...tokens, role: user.ROLE },
+      data: { ...tokens, role: user.ROLE, funcionario_id: user.FUNCIONARIO_ID },
       message: 'Login realizado com sucesso.',
     };
   }
