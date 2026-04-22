@@ -8,8 +8,11 @@ import {
   IsOptional,
   IsUUID,
   IsNotEmpty,
+  IsArray,
 } from 'class-validator';
 import { UserRole } from 'src/common/enums/user-role.enum';
+import { User } from '../entities/user.entity';
+import { UserPermission } from 'src/common/enums/user-permission.enum';
 
 export class CreateUserDto {
   @ApiPropertyOptional({ example: 'joao.silva' })
@@ -55,4 +58,18 @@ export class CreateUserDto {
   @IsUUID('4', { message: 'O FUNCIONARIO_ID deve ser um UUID válido' })
   @IsOptional()
   FUNCIONARIO_ID?: string;
+
+  @ApiPropertyOptional({
+    example: ['APPROVE_VACATIONS', 'VIEW_REPORTS'],
+    enum: UserPermission,
+    isArray: true,
+    description: 'Permissões adicionais para o usuário',
+  })
+  @IsArray({ message: 'O campo PERMISSIONS deve ser um array' })
+  @IsEnum(UserPermission, {
+    each: true,
+    message: 'Um ou mais valores informados para PERMISSIONS são inválidos',
+  })
+  @IsOptional()
+  PERMISSIONS?: UserPermission[];
 }
