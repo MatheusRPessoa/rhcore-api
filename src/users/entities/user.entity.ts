@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { UserRole } from 'src/common/enums/user-role.enum';
 import { Employee } from 'src/employees/entities/employee.entity';
+import { UserPermission } from 'src/common/enums/user-permission.enum';
 
 @Entity('USUARIOS')
 export class User extends BaseEntity {
@@ -66,4 +67,11 @@ export class User extends BaseEntity {
     unique: true,
   })
   FUNCIONARIO_ID: string | null;
+
+  @Column({
+    name: 'PERMISSIONS',
+    type: 'json',
+    default: () => "'[]'",
+  })
+  PERMISSIONS: UserPermission[];
 }
