@@ -1,3 +1,4 @@
+import { UserPermission } from '../enums/user-permission.enum';
 import { UserRole } from '../enums/user-role.enum';
 
 export interface AuthenticatedRequest extends Request {
@@ -5,6 +6,8 @@ export interface AuthenticatedRequest extends Request {
     sub: string;
     username: string;
     role: UserRole;
+    permissions: UserPermission[];
+    funcionario_id: string | null;
     refreshToken?: string;
   };
 }

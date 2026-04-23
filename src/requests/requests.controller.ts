@@ -60,8 +60,10 @@ export class RequestsController {
   @ApiOperation({ summary: 'Listar solicitações' })
   @ApiResponse({ status: 200, type: RequestListResponseDto })
   @ApiResponse({ status: 401, type: UnauthorizedResponseDto })
-  async findAll(): Promise<RequestListResponseDto> {
-    const requests = await this.requestsService.findAll();
+  async findAll(
+    @Req() req: AuthenticatedRequest,
+  ): Promise<RequestListResponseDto> {
+    const requests = await this.requestsService.findAll(req.user);
     return {
       succeeded: true,
       data: requests,
