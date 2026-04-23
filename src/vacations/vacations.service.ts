@@ -11,6 +11,10 @@ import { Vacation } from './entities/vacation.entity';
 import { Repository } from 'typeorm';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { VacationStatusEnum } from './enums/vacation-status.enum';
+import { AuthUser } from 'src/auth/types/auth-user.type';
+import { UserRole } from 'src/common/enums/user-role.enum';
+import { UserPermission } from 'src/common/enums/user-permission.enum';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class VacationsService {
@@ -51,10 +55,23 @@ export class VacationsService {
     return saved;
   }
 
-  async findAll(): Promise<Vacation[]> {
-    return this.vacationRepository.find({
-      relations: ['FUNCIONARIO', 'APROVADO_POR'],
-    });
+  async findAll(user: AuthUser): Promise<Vacation[]> {
+    const query = this.vacationRepository
+      .createQueryBuilder('vacation')
+      .leftJoinAndSelect('vacation.FUNCIONARIO', 'FUNCIONARIO')
+      .leftJoinAndSelect('vacation.APROVADO_POR', 'APROVADO_POR');
+
+    if (
+      user.role === UserRole.EMPLOYEE &&
+      !user.permissions.includes(UserPermission.APPROVE_VACATIONS) &&
+      !user.permissions.includes(UserPermission.VIEW_ALL_EMPLOYEES)
+    ) {
+      query.andWhere('vacation.FUNCIONARIO_ID = :id', {
+        id: user.funcionario_id,
+      });
+    }
+
+    return query.getMany();
   }
 
   async findOne(id: string): Promise<Vacation> {
@@ -99,7 +116,7 @@ export class VacationsService {
       }),
       ...(dto.OBSERVACAO !== undefined && { OBSERVACAO: dto.OBSERVACAO }),
       ...(dto.APROVADO_POR_ID !== undefined && {
-        APROVADO_POR: { ID: dto.APROVADO_POR_ID } as Employee,
+        APROVADO_POR: { ID: dto.APROVADO_POR_ID } as User,
       }),
       ...(dto.DATA_APROVACAO !== undefined && {
         DATA_APROVACAO: new Date(dto.DATA_APROVACAO),

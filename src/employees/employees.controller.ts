@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
@@ -32,6 +33,8 @@ import {
 } from 'src/common/dto/error-response.dto';
 import type { AuthenticatedRequest } from 'src/common/interfaces/authenticated-request.interface';
 import { SuccessMessageResponseDto } from 'src/common/dto/base-response.dto';
+import { UserRole } from 'src/common/enums/user-role.enum';
+import { UserPermission } from 'src/common/enums/user-permission.enum';
 
 @ApiTags('Funcionários')
 @ApiBearerAuth('JWT-auth')
@@ -62,7 +65,15 @@ export class EmployeesController {
   @ApiOperation({ summary: 'Listar funcionários' })
   @ApiResponse({ status: 200, type: EmployeeListResponseDto })
   @ApiResponse({ status: 401, type: UnauthorizedResponseDto })
-  async findAll(): Promise<EmployeeListResponseDto> {
+  async findAll(
+    @Req() req: AuthenticatedRequest,
+  ): Promise<EmployeeListResponseDto> {
+    if (
+      req.user.role === UserRole.EMPLOYEE &&
+      !req.user.permissions.includes(UserPermission.VIEW_ALL_EMPLOYEES)
+    ) {
+      throw new ForbiddenException('Acesso negado');
+    }
     const employees = await this.employeesService.findAll();
     return {
       succeeded: true,

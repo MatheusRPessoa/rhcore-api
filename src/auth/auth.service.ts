@@ -7,6 +7,7 @@ import { UserRole } from 'src/common/enums/user-role.enum';
 import * as crypto from 'crypto';
 import { BadRequestException } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UserPermission } from 'src/common/enums/user-permission.enum';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,8 @@ export class AuthService {
       user.ID,
       user.NOME_USUARIO,
       user.ROLE,
+      user.PERMISSIONS,
+      user.FUNCIONARIO_ID,
     );
     await this.saveRefreshToken(user.ID, tokens.refresh_token);
 
@@ -50,6 +53,8 @@ export class AuthService {
       user.ID,
       user.NOME_USUARIO,
       user.ROLE,
+      user.PERMISSIONS,
+      user.FUNCIONARIO_ID,
     );
     await this.saveRefreshToken(user.ID, tokens.refresh_token);
     return {
@@ -139,8 +144,16 @@ export class AuthService {
     userId: string,
     username: string,
     role: UserRole,
+    permissions: UserPermission[],
+    funcionario_id: string | null,
   ) {
-    const payload = { username, sub: userId, role };
+    const payload = {
+      username,
+      sub: userId,
+      role,
+      permissions,
+      funcionario_id,
+    };
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(payload, { expiresIn: '1d' }),
       this.jwtService.signAsync(payload, {
