@@ -60,8 +60,10 @@ export class VacationsController {
   @ApiOperation({ summary: 'Listar férias' })
   @ApiResponse({ status: 200, type: VacationListResponseDto })
   @ApiResponse({ status: 401, type: UnauthorizedResponseDto })
-  async findAll(): Promise<VacationListResponseDto> {
-    const vacations = await this.vacationsService.findAll();
+  async findAll(
+    @Req() req: AuthenticatedRequest,
+  ): Promise<VacationListResponseDto> {
+    const vacations = await this.vacationsService.findAll(req.user);
     return {
       succeeded: true,
       data: vacations,

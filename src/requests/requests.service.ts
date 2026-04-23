@@ -6,6 +6,9 @@ import { Request } from './entities/request.entity';
 import { Repository } from 'typeorm';
 import { Employee } from 'src/employees/entities/employee.entity';
 import { User } from 'src/users/entities/user.entity';
+import { AuthUser } from 'src/auth/types/auth-user.type';
+import { UserRole } from 'src/common/enums/user-role.enum';
+import { UserPermission } from 'src/common/enums/user-permission.enum';
 
 @Injectable()
 export class RequestsService {
@@ -31,10 +34,22 @@ export class RequestsService {
     return saved;
   }
 
-  async findAll(): Promise<Request[]> {
-    return this.requestRepository.find({
-      relations: ['FUNCIONARIO', 'APROVADO_POR'],
-    });
+  async findAll(user: AuthUser): Promise<Request[]> {
+    const query = this.requestRepository
+      .createQueryBuilder('request')
+      .leftJoinAndSelect('request.FUNCIONARIO', 'FUNCIONARIO')
+      .leftJoinAndSelect('request.APROVADO_POR', 'APROVADO_POR');
+
+    if (
+      user.role === UserRole.EMPLOYEE &&
+      !user.permissions.includes(UserPermission.APPROVE_REQUESTS)
+    ) {
+      query.andWhere('request.FUNCIONARIO_ID = :id', {
+        id: user.funcionario_id,
+      });
+    }
+
+    return query.getMany();
   }
 
   async findOne(id: string): Promise<Request> {

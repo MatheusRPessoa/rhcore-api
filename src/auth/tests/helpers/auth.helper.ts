@@ -1,6 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { UserRole } from 'src/common/enums/user-role.enum';
 
 interface AuthResponse {
   succeeded: boolean;
@@ -27,8 +28,11 @@ export class AuthHelper {
         SENHA: await bcrypt.hash('admin123', 10),
         EMAIL: 'admin@admin.com.br',
         CRIADO_POR: 'test',
+        ROLE: UserRole.ADMIN,
       });
       await repo.save(user);
+    } else if (exists.ROLE !== UserRole.ADMIN) {
+      await repo.update(exists.ID, { ROLE: UserRole.ADMIN });
     }
 
     await this.authenticate();
