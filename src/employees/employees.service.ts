@@ -37,7 +37,7 @@ export class EmployeesService {
         );
       }
       if (existing.CPF === dto.CPF) {
-        throw new ConflictException('Já exoste um funcionário com esse CPF');
+        throw new ConflictException('Já existe um funcionário com esse CPF');
       }
       throw new ConflictException('Já existe um funcionário com esse e-mail');
     }
