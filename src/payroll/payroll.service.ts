@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   Logger,
@@ -171,6 +172,10 @@ export class PayrollService {
 
   async pay(id: string, updatedBy: string): Promise<Payroll> {
     const payroll = await this.findOne(id);
+
+    if (payroll.STATUS_FOLHA === PayrollStatusEnum.PAGO) {
+      throw new BadRequestException('Esta folha de pagamento já foi paga.');
+    }
 
     Object.assign(payroll, {
       STATUS_FOLHA: PayrollStatusEnum.PAGO,
