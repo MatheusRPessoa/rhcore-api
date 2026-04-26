@@ -11,7 +11,6 @@ import {
   IsArray,
 } from 'class-validator';
 import { UserRole } from 'src/common/enums/user-role.enum';
-import { User } from '../entities/user.entity';
 import { UserPermission } from 'src/common/enums/user-permission.enum';
 
 export class CreateUserDto {

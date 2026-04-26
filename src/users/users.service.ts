@@ -55,7 +55,10 @@ export class UsersService {
       this.logger.log(`Usuário ${saved.ID} criado por ${createdBy}`);
       return saved;
     } catch (err) {
-      if (err instanceof QueryFailedError && (err as any).code === '23505') {
+      if (
+        err instanceof QueryFailedError &&
+        (err as QueryFailedError & { code: string }).code === '23505'
+      ) {
         throw new ConflictException('Já existe um usuário com esse e-mail.');
       }
       throw err;
