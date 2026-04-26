@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -33,6 +34,7 @@ import {
 import { CreatePayrollDto } from './dto/create-payroll.dto';
 import type { AuthenticatedRequest } from 'src/common/interfaces/authenticated-request.interface';
 import { UpdatePayrollDto } from './dto/update-payroll.dto';
+import { SuccessMessageResponseDto } from 'src/common/dto/base-response.dto';
 
 @ApiTags('Folha de pagamento')
 @ApiBearerAuth('JWT-auth')
@@ -198,6 +200,88 @@ export class PayrollController {
       succeeded: true,
       data: payroll,
       message: 'Folha de pagamento atualizada com sucesso.',
+    };
+  }
+
+  @Patch(':id/pay')
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions(UserPermission.MANAGE_PAYROLL)
+  @ApiOperation({
+    summary: 'Marcar folha de pagamento como paga',
+    description:
+      'Endpoint responsável por marcar uma folha de pagamento como o STATUS PAGA.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID da folha de pagamento',
+    type: 'string',
+    required: true,
+    example: 'a3bb189e-8bf9-3888-9912-ace4e6543002',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Folha de pagamento marcada como paga com sucesso.',
+    type: PayrollResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Token de sessão não encontrado ou sessão inválida/expirada',
+    type: UnauthorizedResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Folha de pagamento não encontrada.',
+    type: NotFoundResponseDto,
+  })
+  async pay(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<PayrollResponseDto> {
+    const payroll = await this.payrollService.pay(id, req.user.username);
+    return {
+      succeeded: true,
+      data: payroll,
+      message: 'Folha de pagamento marcada como paga com sucesso.',
+    };
+  }
+
+  @Delete(':id')
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions(UserPermission.MANAGE_PAYROLL)
+  @ApiOperation({
+    summary: 'Remover folha de pagamento.',
+    description: 'Endpoint responsável por remover uma folha de pagamento.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID da folha de pagamento',
+    type: 'string',
+    required: true,
+    example: 'a3bb189e-8bf9-3888-9912-ace4e6543002',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Folha de pagamento romovida com sucesso.',
+    type: SuccessMessageResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Token de sessão não encontrado ou sessão inválida/expirada',
+    type: UnauthorizedResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Folha de pagamento não encontrada',
+    type: NotFoundResponseDto,
+  })
+  async remove(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<SuccessMessageResponseDto> {
+    await this.payrollService.remove(id, req.user.username);
+    return {
+      succeeded: true,
+      message: 'Folha de pagamento removida com sucesso.',
     };
   }
 }

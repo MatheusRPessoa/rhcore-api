@@ -13,6 +13,7 @@ import { PositionsModule } from './positions/positions.module';
 import { VacationsModule } from './vacations/vacations.module';
 import { RequestsModule } from './requests/requests.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { PayrollModule } from './payroll/payroll.module';
 
 @Module({
   imports: [
@@ -92,6 +93,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     PositionsModule,
     VacationsModule,
     RequestsModule,
+    PayrollModule,
   ],
   controllers: [AppController],
   providers: [AppService],
