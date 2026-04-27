@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -35,6 +36,7 @@ import { CreatePayrollDto } from './dto/create-payroll.dto';
 import type { AuthenticatedRequest } from 'src/common/interfaces/authenticated-request.interface';
 import { UpdatePayrollDto } from './dto/update-payroll.dto';
 import { SuccessMessageResponseDto } from 'src/common/dto/base-response.dto';
+import type { Response } from 'express';
 
 @ApiTags('Folha de pagamento')
 @ApiBearerAuth('JWT-auth')
@@ -143,6 +145,43 @@ export class PayrollController {
       data: payroll,
       message: 'Folha de pagamento encontrada com sucesso.',
     };
+  }
+
+  @Get(':id/slip')
+  @ApiOperation({
+    summary: 'Gerar holerite em PDF.',
+    description:
+      'Endpoint responsável por gerar o holerite em PDF de uma folha de pagamento.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID da folha de pagamento',
+    type: 'string',
+    required: true,
+    example: 'a3bb189e-8bf9-3888-9912-ace4e6543002',
+  })
+  @ApiResponse({ status: 200, description: 'PDF gerado com sucesso.' })
+  @ApiResponse({
+    status: 404,
+    description: 'Folha de pagamento não encontrada.',
+    type: NotFoundResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Token de sessão não encontrado ou sessão inválida/expirada.',
+    type: UnauthorizedResponseDto,
+  })
+  async generateSlip(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    const pdf = await this.payrollService.generateSlip(id);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="holerite-${id}.pdf"`,
+      'Content-Length': pdf.length,
+    });
+    res.end(pdf);
   }
 
   @Patch(':id')
