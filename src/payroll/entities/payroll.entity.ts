@@ -15,6 +15,9 @@ export class Payroll extends BaseEntity {
   @Column({ name: 'ANO_REFERENCIA', type: 'int' })
   ANO_REFERENCIA: number;
 
+  @Column({ name: 'NUMERO_DEPENDENTES', type: 'int', default: 0 })
+  NUMERO_DEPENDENTES: number;
+
   @Column({ name: 'SALARIO_BASE', type: 'decimal', precision: 10, scale: 2 })
   SALARIO_BASE: number;
 

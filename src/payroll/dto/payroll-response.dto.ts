@@ -26,6 +26,9 @@ export class PayrollDataDto {
   @ApiProperty({ example: 2025 })
   ANO_REFERENCIA: number;
 
+  @ApiProperty({ example: 1 })
+  NUMERO_DEPENDENTES: number;
+
   @ApiProperty({ example: 5000.0 })
   SALARIO_BASE: number;
 
