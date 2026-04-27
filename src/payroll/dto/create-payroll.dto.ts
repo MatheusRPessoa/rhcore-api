@@ -30,6 +30,12 @@ export class CreatePayrollDto {
   @IsNotEmpty({ message: 'O ano de referência é obrigatório' })
   ANO_REFERENCIA: number;
 
+  @ApiPropertyOptional({ example: 1 })
+  @IsInt({ message: 'O número de dependentes deve ser um número inteiro' })
+  @Min(0, { message: 'O número de dependentes não pode ser negativo' })
+  @IsOptional()
+  NUMERO_DEPENDENTES?: number;
+
   @ApiProperty({ example: 5000.0 })
   @IsNumber({}, { message: 'O salário base deve ser um número' })
   @IsPositive({ message: 'O salário base deve ser positivo' })
