@@ -47,10 +47,32 @@ describe('PATCH /payroll/:id', () => {
       DESCONTO_INSS: 800,
       DESCONTO_IRRF: 500,
       OUTROS_DESCONTOS: 200,
+      VALOR_PASSAGEM: 200,
     });
 
     expect(status).toBe(200);
-    expect(body.data?.SALARIO_LIQUIDO).toBe(7500);
+    expect(body.data?.SALARIO_LIQUIDO).toBe(7300);
+  });
+
+  it('deve recalcular DESCONTO_VT ao atualizar VALOR_PASSAGEM (200)', async () => {
+    const created = await createPayroll({
+      MES_REFERENCIA: 8,
+      SALARIO_BASE: 5000,
+      DESCONTO_INSS: 500,
+      DESCONTO_IRRF: 200,
+      VALOR_PASSAGEM: 200,
+    });
+    const id = created.body.data!.ID;
+
+    const { status, body } = await updatePayroll(id, {
+      VALOR_PASSAGEM: 400,
+      DESCONTO_INSS: 500,
+      DESCONTO_IRRF: 200,
+    });
+
+    expect(status).toBe(200);
+    expect(body.data?.DESCONTO_VT).toBe(300);
+    expect(body.data?.SALARIO_LIQUIDO).toBe(4000);
   });
 
   it('deve retornar 409 ao atualizar para mês/ano já existente para o funcionario', async () => {
