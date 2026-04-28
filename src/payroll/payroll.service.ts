@@ -84,19 +84,26 @@ export class PayrollService {
     return Math.round((baseCalculo * 0.275 - 896.0) * 100) / 100;
   }
 
+  private calcVT(salario: number, valorPassagem: number): number {
+    const teto = Math.round(salario * 0.06 * 100) / 100;
+    return Math.min(valorPassagem, teto);
+  }
+
   private calcLiquido(
     base: number,
     bonus: number,
     inss: number,
     irrf: number,
     outros: number,
+    vt: number,
   ): number {
     return (
       Number(base) +
       Number(bonus) -
       Number(inss) -
       Number(irrf) -
-      Number(outros)
+      Number(outros) -
+      Number(vt)
     );
   }
 
@@ -121,6 +128,7 @@ export class PayrollService {
     const irrf =
       dto.DESCONTO_IRRF ?? this.calcIRRF(dto.SALARIO_BASE, inss, dependentes);
     const outros = dto.OUTROS_DESCONTOS ?? 0;
+    const vt = this.calcVT(dto.SALARIO_BASE, dto.VALOR_PASSAGEM ?? 0);
 
     const payroll = this.payrollRepository.create({
       FUNCIONARIO: { ID: dto.FUNCIONARIO_ID } as Employee,
@@ -132,12 +140,14 @@ export class PayrollService {
       DESCONTO_INSS: inss,
       DESCONTO_IRRF: irrf,
       OUTROS_DESCONTOS: outros,
+      DESCONTO_VT: vt,
       SALARIO_LIQUIDO: this.calcLiquido(
         dto.SALARIO_BASE,
         bonus,
         inss,
         irrf,
         outros,
+        vt,
       ),
       STATUS_FOLHA: PayrollStatusEnum.PENDENTE,
       OBSERVACAO: dto.OBSERVACAO ?? null,
@@ -210,6 +220,10 @@ export class PayrollService {
     const inss = dto.DESCONTO_INSS ?? this.calcINSS(base);
     const irrf = dto.DESCONTO_IRRF ?? this.calcIRRF(base, inss, dependentes);
     const outros = dto.OUTROS_DESCONTOS ?? Number(payroll.OUTROS_DESCONTOS);
+    const vt = this.calcVT(
+      base,
+      dto.VALOR_PASSAGEM ?? Number(payroll.DESCONTO_VT),
+    );
 
     Object.assign(payroll, {
       ...(dto.FUNCIONARIO_ID && {
@@ -227,7 +241,8 @@ export class PayrollService {
       DESCONTO_INSS: inss,
       DESCONTO_IRRF: irrf,
       OUTROS_DESCONTOS: outros,
-      SALARIO_LIQUIDO: this.calcLiquido(base, bonus, inss, irrf, outros),
+      DESCONTO_VT: vt,
+      SALARIO_LIQUIDO: this.calcLiquido(base, bonus, inss, irrf, outros, vt),
       ...(dto.STATUS_FOLHA !== undefined && { STATUS_FOLHA: dto.STATUS_FOLHA }),
       ...(dto.OBSERVACAO !== undefined && { OBSERVACAO: dto.OBSERVACAO }),
       ATUALIZADO_POR: updatedBy,
@@ -293,7 +308,8 @@ export class PayrollService {
     const totalDescontos =
       Number(payroll.DESCONTO_INSS) +
       Number(payroll.DESCONTO_IRRF) +
-      Number(payroll.OUTROS_DESCONTOS);
+      Number(payroll.OUTROS_DESCONTOS) +
+      Number(payroll.DESCONTO_VT);
 
     const buildVia = (label: string) => [
       {
@@ -383,6 +399,15 @@ export class PayrollService {
               { text: '-', style: 'tableRow', alignment: 'right' },
               {
                 text: fmt(payroll.OUTROS_DESCONTOS),
+                style: 'tableRow',
+                alignment: 'right',
+              },
+            ],
+            [
+              { text: 'Vale Transporte', style: 'tableRow' },
+              { text: '-', style: 'tableRow', alignment: 'right' },
+              {
+                text: fmt(payroll.DESCONTO_VT),
                 style: 'tableRow',
                 alignment: 'right',
               },

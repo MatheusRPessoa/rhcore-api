@@ -29,6 +29,7 @@ describe('POST /payroll', () => {
       DESCONTO_INSS: 550,
       DESCONTO_IRRF: 300,
       OUTROS_DESCONTOS: 100,
+      VALOR_PASSAGEM: 400,
       OBSERVACAO: 'Folha do mês de março',
     });
 
@@ -37,10 +38,56 @@ describe('POST /payroll', () => {
     expect(body.data).toBeDefined();
     expect(body.data?.MES_REFERENCIA).toBe(3);
     expect(body.data?.ANO_REFERENCIA).toBe(2025);
+    expect(body.data?.DESCONTO_VT).toBe(300);
     expect(body.data?.SALARIO_BASE).toBe(5000);
-    expect(body.data?.SALARIO_LIQUIDO).toBe(4550);
+    expect(body.data?.SALARIO_LIQUIDO).toBe(4250);
     expect(body.data?.STATUS_FOLHA).toBe('PENDENTE');
     expect(body.message).toBe('Folha de pagamento criada com sucesso.');
+  });
+
+  it('deve aplicar teto de 6% quando VALOR_PASSAGEM supera o limite', async () => {
+    const { status, body } = await createPayroll({
+      MES_REFERENCIA: 8,
+      ANO_REFERENCIA: 2055,
+      SALARIO_BASE: 5000,
+      DESCONTO_INSS: 500,
+      DESCONTO_IRRF: 200,
+      OUTROS_DESCONTOS: 0,
+      VALOR_PASSAGEM: 400,
+    });
+
+    expect(status).toBe(201);
+    expect(body.data?.DESCONTO_VT).toBe(300);
+    expect(body.data?.SALARIO_LIQUIDO).toBe(4000);
+  });
+
+  it('deve usar o valor real da passagem quando menor que 6% do salário', async () => {
+    const { status, body } = await createPayroll({
+      MES_REFERENCIA: 9,
+      ANO_REFERENCIA: 2025,
+      SALARIO_BASE: 5000,
+      DESCONTO_INSS: 500,
+      DESCONTO_IRRF: 200,
+      OUTROS_DESCONTOS: 0,
+      VALOR_PASSAGEM: 200,
+    });
+
+    expect(status).toBe(201);
+    expect(body.data?.DESCONTO_VT).toBe(200);
+    expect(body.data?.SALARIO_LIQUIDO).toBe(4100);
+  });
+
+  it('deve manter DESCONTO_VT zerao quando VALOR_PASSAGEM não é informado', async () => {
+    const { status, body } = await createPayroll({
+      MES_REFERENCIA: 10,
+      ANO_REFERENCIA: 2025,
+      SALARIO_BASE: 5000,
+      DESCONTO_INSS: 500,
+      DESCONTO_IRRF: 200,
+    });
+
+    expect(status).toBe(201);
+    expect(body.data?.DESCONTO_VT).toBe(0);
   });
 
   it('deve retornar 409 quando já existe folha de pagamento para o mesmo funcionário no mesmo mês/ano', async () => {
