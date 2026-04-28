@@ -66,6 +66,12 @@ export class CreatePayrollDto {
   @IsOptional()
   OUTROS_DESCONTOS?: number;
 
+  @ApiPropertyOptional({ example: 220.0 })
+  @IsNumber({}, { message: 'O valor da passagem deve ser um número' })
+  @Min(0, { message: 'O valor da passagem não pode ser negativa' })
+  @IsOptional()
+  VALOR_PASSAGEM?: number;
+
   @ApiPropertyOptional({ example: 'Folha do mês de março' })
   @IsString({ message: 'A observação deve ser texto' })
   @IsOptional()

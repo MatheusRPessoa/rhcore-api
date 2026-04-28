@@ -20,6 +20,7 @@ export interface PayrollData {
   DESCONTO_INSS: number;
   DESCONTO_IRRF: number;
   OUTROS_DESCONTOS: number;
+  DESCONTO_VT: number;
   SALARIO_LIQUIDO: number;
   STATUS_FOLHA: PayrollStatusEnum;
   OBSERVACAO: string | null;
@@ -63,6 +64,7 @@ export async function createPayroll(
     DESCONTO_INSS: number;
     DESCONTO_IRRF: number;
     OUTROS_DESCONTOS: number;
+    VALOR_PASSAGEM: number;
     OBSERVACAO: string;
   }>,
   authenticated = true,
@@ -81,6 +83,9 @@ export async function createPayroll(
     }),
     ...(overrides?.OUTROS_DESCONTOS !== undefined && {
       OUTROS_DESCONTOS: overrides.OUTROS_DESCONTOS,
+    }),
+    ...(overrides?.VALOR_PASSAGEM !== undefined && {
+      VALOR_PASSAGEM: overrides.VALOR_PASSAGEM,
     }),
     ...(overrides?.OBSERVACAO && { OBSERVACAO: overrides.OBSERVACAO }),
   };
@@ -153,6 +158,7 @@ export async function updatePayroll(
     DESCONTO_INSS: number;
     DESCONTO_IRRF: number;
     OUTROS_DESCONTOS: number;
+    VALOR_PASSAGEM: number;
     STATUS_FOLHA: PayrollStatusEnum;
     OBSERVACAO: string;
   }>,

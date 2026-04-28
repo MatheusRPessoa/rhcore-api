@@ -44,6 +44,9 @@ export class PayrollDataDto {
   @ApiProperty({ example: 100.0 })
   OUTROS_DESCONTOS: number;
 
+  @ApiProperty({ example: 220.0 })
+  DESCONTO_VT: number;
+
   @ApiProperty({ example: 4550.0 })
   SALARIO_LIQUIDO: number;
 
