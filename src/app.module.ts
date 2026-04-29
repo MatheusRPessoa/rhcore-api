@@ -14,6 +14,7 @@ import { VacationsModule } from './vacations/vacations.module';
 import { RequestsModule } from './requests/requests.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PayrollModule } from './payroll/payroll.module';
+import { BenefitsModule } from './benefits/benefits.module';
 
 @Module({
   imports: [
@@ -94,6 +95,7 @@ import { PayrollModule } from './payroll/payroll.module';
     VacationsModule,
     RequestsModule,
     PayrollModule,
+    BenefitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,0 +1,6 @@
+export enum BeneficioTipoEnum {
+  VALE_TRANSPORTE = 'VALE_TRANSPORTE',
+  VALE_REFEICAO = 'VALE_REFEICAO',
+  PLANO_SAUDE = 'PLANO_SAUDE',
+  OUTROS = 'OUTROS',
+}
